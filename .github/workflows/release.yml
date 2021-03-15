@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+
+    env:
+      VERSION: ${{ github.event.release.tag_name }}
+      TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+      TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Deploy
+        run: bash scripts/deploy.sh

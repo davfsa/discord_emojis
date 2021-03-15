@@ -1,0 +1,41 @@
+name: CronJob
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Every day at 00:00
+
+  workflow_dispatch:
+
+jobs:
+  check_for_new_version:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Generate new emojis list
+        id: generate
+        run: |
+          python -m pip install -r dev-requirements.txt
+          python scripts/generate_emojis_collection.py templates/emojis_collection_template.py discord_emojis/emojis_collection.py
+
+          if [ "$(git status --short)" ]; then
+            echo "::set-output name=should_release::true"
+          else
+            echo "::set-output name=should_release::false"
+          fi
+
+      - name: Create release
+        if: steps.generate.outputs.should_release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_REPO_SLUG: ${{ github.repository }}
+        run: bash scripts/create_release.sh
