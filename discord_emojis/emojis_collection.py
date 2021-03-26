@@ -25,7 +25,7 @@ import typing
 
 __all__: typing.Sequence[str] = ["EMOJIS", "EMOJIS_VERSION"]
 
-EMOJIS_VERSION: typing.Final[str] = "1615201209064"
+EMOJIS_VERSION: typing.Final[str] = "1616682669773"
 EMOJIS: typing.Tuple[str, ...] = (
     "😀",
     "😃",
