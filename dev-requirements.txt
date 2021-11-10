@@ -7,4 +7,4 @@ requests==2.25.1
 # FORMATTING #
 ##############
 black==21.4b0
-isort==5.8.0
+isort==5.10.1
