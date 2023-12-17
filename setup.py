@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2020 Nekokatt
-# Copyright (c) 2021 davfsa
+# Copyright (c) 2021-present davfsa
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-import re
-import types
-
 import setuptools
 
-name = "discord_emojis"
+import versioneer
 
 
 def long_description():
@@ -34,50 +30,25 @@ def long_description():
         return fp.read()
 
 
-def parse_meta():
-    with open(os.path.join(name, "_about.py")) as fp:
-        code = fp.read()
-
-    token_pattern = re.compile(
-        r"^__(?P<key>\w+)?__\s*=\s*(?P<quote>(?:'{3}|\"{3}|'|\"))(?P<value>.*?)(?P=quote)",
-        re.M,
-    )
-
-    groups = {}
-
-    for match in token_pattern.finditer(code):
-        group = match.groupdict()
-        groups[group["key"]] = group["value"]
-
-    return types.SimpleNamespace(**groups)
-
-
-def parse_requirements_file(path):
-    with open(path) as fp:
-        dependencies = (d.strip() for d in fp.read().split("\n") if d.strip())
-        return [d for d in dependencies if not d.startswith("#")]
-
-
-metadata = parse_meta()
-
 setuptools.setup(
-    name=name,
-    version=metadata.version,
+    name="discord_emojis",
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description="An up-to-date collection of all valid Discord emojis",
     long_description=long_description(),
     long_description_content_type="text/markdown",
-    author=metadata.author,
-    author_email=metadata.email,
-    license=metadata.license,
-    url=metadata.url,
+    author="davfsa",
+    author_email="davfsa@hikari-py.dev",
+    license="MIT",
+    url="https://github.com/davfsa/discord_emojis",
     project_urls={
-        "Source (GitHub)": metadata.url,
-        "Discord": metadata.discord_invite,
-        "Issue Tracker": metadata.issue_tracker,
-        "CI": metadata.ci,
+        "Source (GitHub)": "https://github.com/davfsa/discord_emojis",
+        "Discord": "https://discord.gg/hikari",
+        "Issue Tracker": "https://github.com/davfsa/discord_emojis/issues",
+        "CI": "https://github.com/davfsa/discord_emojis/actions",
     },
-    packages=[name],
-    package_data={name: ["py.typed"]},
+    packages=["discord_emojis"],
+    package_data={"discord_emojis": ["py.typed"]},
     include_package_data=True,
     zip_safe=False,
     classifiers=[
@@ -89,4 +60,5 @@ setuptools.setup(
         "Topic :: Utilities",
         "Typing :: Typed",
     ],
+    python_requires=">=3.8",
 )

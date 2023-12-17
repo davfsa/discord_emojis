@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2021 davfsa
+# Copyright (c) 2021-present davfsa
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,12 @@
 This script takes as a first argument the template which includes the copyright and any
 other info and, as a second argument, the location to output the file.
 """
+import json
 import os
 import shutil
 import sys
 import typing
-
-import requests
+import urllib.request
 
 sys.path.append(".")
 
@@ -38,9 +38,8 @@ DISCORD_EMOJI_MAPPING_URL = "https://emzi0767.gl-pages.emzi0767.dev/discord-emoj
 
 
 def fetch_discord_emojis() -> typing.Tuple[str, typing.List[str]]:
-    response = requests.get(DISCORD_EMOJI_MAPPING_URL)
-    response.encoding = "utf-8-sig"
-    response_json = response.json()
+    with urllib.request.urlopen(DISCORD_EMOJI_MAPPING_URL) as request:
+        response_json = json.loads(request.read())
 
     version = response_json["version"]
     emojis = [utils.normalize_emoji(emoji_json["surrogates"]) for emoji_json in response_json["emojiDefinitions"]]
@@ -58,6 +57,7 @@ def create_emoji_file(*, template_file: str, output_file: str, version: str, emo
     with open(output_file, "a") as fp:
         fp.write("# File generated using scripts/generate_emojis_collection.py\n")
         fp.write(f"# Emoji count: {len(emojis)}\n")
+        fp.write("from __future__ import annotations\n\n")
         fp.write("import typing\n\n")
 
         fp.write('__all__: typing.Sequence[str] = ("EMOJIS", "EMOJIS_VERSION")\n\n')

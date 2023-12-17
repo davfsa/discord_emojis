@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2021 davfsa
+# Copyright (c) 2021-present davfsa
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -34,14 +34,7 @@ echo "===== INSTALLING DEPENDENCIES ====="
 python -m pip install \
     setuptools \
     wheel \
-    twine \
-    requests
-
-echo "-- Bumping repository version to ${VERSION} --"
-sed "s|^__version__.*|__version__ = \"${VERSION}\"|g" -i discord_emojis/_about.py
-echo "=========================================================================="
-cat discord_emojis/_about.py
-echo "=========================================================================="
+    twine
 
 echo "===== DEPLOYING TO PYPI ====="
 python setup.py sdist bdist_wheel

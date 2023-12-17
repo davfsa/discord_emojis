@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2021 davfsa
+# Copyright (c) 2021-present davfsa
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +20,6 @@
 # SOFTWARE.
 """An up-to-date collection of all Discord emojis."""
 
-from discord_emojis._about import __author__ as __author__
-from discord_emojis._about import __ci__ as __ci__
-from discord_emojis._about import __copyright__ as __copyright__
-from discord_emojis._about import __discord_invite__ as __discord_invite__
-from discord_emojis._about import __email__ as __email__
-from discord_emojis._about import __issue_tracker__ as __issue_tracker__
-from discord_emojis._about import __license__ as __license__
-from discord_emojis._about import __url__ as __url__
-from discord_emojis._about import __version__ as __version__
-from discord_emojis.emojis_collection import EMOJIS as EMOJIS
-from discord_emojis.emojis_collection import EMOJIS_VERSION as EMOJIS_VERSION
-from discord_emojis.utils import normalize_emoji as normalize_emoji
+from discord_emojis import utils
+from discord_emojis.emojis_collection import EMOJIS
+from discord_emojis.emojis_collection import EMOJIS_VERSION
