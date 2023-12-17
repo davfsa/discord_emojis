@@ -34,7 +34,7 @@ sys.path.append(".")
 
 from discord_emojis import utils
 
-DISCORD_EMOJI_MAPPING_URL = "https://static.emzi0767.com/misc/discordEmojiMap.json"
+DISCORD_EMOJI_MAPPING_URL = "https://emzi0767.gl-pages.emzi0767.dev/discord-emoji/discordEmojiMap-canary.min.json"
 
 
 def fetch_discord_emojis() -> typing.Tuple[str, typing.List[str]]:
@@ -60,15 +60,15 @@ def create_emoji_file(*, template_file: str, output_file: str, version: str, emo
         fp.write(f"# Emoji count: {len(emojis)}\n")
         fp.write("import typing\n\n")
 
-        fp.write('__all__: typing.Sequence[str] = ["EMOJIS", "EMOJIS_VERSION"]\n\n')
+        fp.write('__all__: typing.Sequence[str] = ("EMOJIS", "EMOJIS_VERSION")\n\n')
 
         fp.write(f'EMOJIS_VERSION: typing.Final[str] = "{version}"\n')
-        fp.write("EMOJIS: typing.Tuple[str, ...] = (\n")
+        fp.write("EMOJIS: typing.Set[str] = {\n")
 
         for emoji in emojis:
             fp.write(f'    "{emoji}",\n')
 
-        fp.write(")\n")
+        fp.write("}\n")
 
 
 def main() -> None:
