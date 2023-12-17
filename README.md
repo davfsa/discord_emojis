@@ -14,7 +14,7 @@ latest version of the package or update it if a new version is available.
 This tiny package provides `discord_emojis.EMOJIS`, a set of all valid Discord emojis.
 
 The version of the package and emojis can be checked with `discord_emojis.__version__`
-and `discord_emojis.__emojis_version__` respectfully.
+and `discord_emojis.__emojis_version__` respectively.
 
 Additionally, `discord_emojis.utils` provides additional utilities to help
 dealing with emojis.
