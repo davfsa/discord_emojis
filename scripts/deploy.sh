@@ -25,10 +25,10 @@ env | grep -oP "^[^=]+" | sort
 
 if [ -z ${VERSION+x} ]; then echo "VERSION environment variable is missing" && exit 1; fi
 if [ -z "${VERSION}" ]; then echo "VERSION environment variable is empty" && exit 1; fi
-if [ -z ${TWINE_USERNAME+x} ]; then echo "$TWINE_USERNAME environment variable is missing" && exit 1; fi
-if [ -z "${TWINE_USERNAME}" ]; then echo "$TWINE_USERNAME environment variable is empty" && exit 1; fi
-if [ -z ${TWINE_PASSWORD+x} ]; then echo "$TWINE_PASSWORD environment variable is missing" && exit 1; fi
-if [ -z "${TWINE_PASSWORD}" ]; then echo "$TWINE_PASSWORD environment variable is empty" && exit 1; fi
+if [ -z ${TWINE_USERNAME+x} ]; then echo "TWINE_USERNAME environment variable is missing" && exit 1; fi
+if [ -z "${TWINE_USERNAME}" ]; then echo "TWINE_USERNAME environment variable is empty" && exit 1; fi
+if [ -z ${TWINE_PASSWORD+x} ]; then echo "TWINE_PASSWORD environment variable is missing" && exit 1; fi
+if [ -z "${TWINE_PASSWORD}" ]; then echo "TWINE_PASSWORD environment variable is empty" && exit 1; fi
 
 echo "===== INSTALLING DEPENDENCIES ====="
 python -m pip install \
