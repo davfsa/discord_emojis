@@ -27,9 +27,9 @@ jobs:
           python scripts/generate_emojis_collection.py templates/emojis_collection_template.py discord_emojis/emojis_collection.py
 
           if [ "$(git status --short)" ]; then
-            echo "should_release=true" >> $GITHUB_STATE
+            echo "should_release=true" >> $GITHUB_OUTPUT
           else
-            echo "should_release=false" >> $GITHUB_STATE
+            echo "should_release=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Create release
