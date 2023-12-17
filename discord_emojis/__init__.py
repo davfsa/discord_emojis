@@ -21,5 +21,6 @@
 """An up-to-date collection of all Discord emojis."""
 
 from discord_emojis import utils
+from discord_emojis._version import __emojis_version__
+from discord_emojis._version import __version__
 from discord_emojis.emojis_collection import EMOJIS
-from discord_emojis.emojis_collection import EMOJIS_VERSION

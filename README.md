@@ -11,12 +11,13 @@ latest version of the package or update it if a new version is available.
 
 # What does this package provide?
 
-This package provides 2 main variables:
-- `EMOJIS_VERSION`: The version of the Discord emoji mapping used to
-  generate the package.
-- `EMOJIS`: A collection of all valid Discord Emojis.
+This tiny package provides `discord_emojis.EMOJIS`, a set of all valid Discord emojis.
 
-Additionally, `discord_emojis.utils` provides additional functionality.
+The version of the package and emojis can be checked with `discord_emojis.__version__`
+and `discord_emojis.__emojis_version__` respectfully.
+
+Additionally, `discord_emojis.utils` provides additional utilities to help
+dealing with emojis.
 
 # Acknowledgements
 

@@ -1,0 +1,49 @@
+name: Update watcher
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 10 * * *" # Every day at 10:00 UTC
+
+jobs:
+  check_for_new_version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # We need our own token to be able to trigger CI with the push
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 1
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Generate new emojis list
+        id: generate
+        run: |
+          python scripts/generate_emojis_collection.py \
+                 templates/emojis_collection_template.py \
+                 discord_emojis/emojis_collection.py \
+                 discord_emojis/_version.py
+
+          if [ "$(git status --short)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes
+        if: steps.generate.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          emojis_version=$(python -c "import discord_emojis; print(discord_emojis.__emojis_version__)")
+
+          git add .
+          git commit -m "Discord Emojis Version $emojis_version"
+          git push

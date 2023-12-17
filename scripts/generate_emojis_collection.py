@@ -20,11 +20,15 @@
 # SOFTWARE.
 """A script to generate a python file containing a mapping of all valid Discord Emojis.
 
-This script takes as a first argument the template which includes the copyright and any
-other info and, as a second argument, the location to output the file.
+This script takes in the following arguments:
+    1) The template to use as a preamble for the emojis
+    2) The location to place the output file
+    3) The location of the _version.py file
 """
+import datetime
 import json
 import os
+import re
 import shutil
 import sys
 import typing
@@ -37,33 +41,32 @@ from discord_emojis import utils
 DISCORD_EMOJI_MAPPING_URL = "https://emzi0767.gl-pages.emzi0767.dev/discord-emoji/discordEmojiMap-canary.min.json"
 
 
-def fetch_discord_emojis() -> typing.Tuple[str, typing.List[str]]:
+def fetch_discord_emojis() -> typing.Tuple[int, typing.List[str]]:
     with urllib.request.urlopen(DISCORD_EMOJI_MAPPING_URL) as request:
         response_json = json.loads(request.read())
 
-    version = response_json["version"]
+    version = int(response_json["version"])
     emojis = [utils.normalize_emoji(emoji_json["surrogates"]) for emoji_json in response_json["emojiDefinitions"]]
 
     return version, emojis
 
 
-def create_emoji_file(*, template_file: str, output_file: str, version: str, emojis: typing.List[str]) -> None:
+def create_emoji_file(*, template_file: str, output_file: str, emojis: typing.List[str]) -> None:
     try:
         os.remove(output_file)
     except FileNotFoundError:
         pass
-    shutil.copy(template_file, output_file)
 
+    shutil.copy(template_file, output_file)
     with open(output_file, "a") as fp:
         fp.write("# File generated using scripts/generate_emojis_collection.py\n")
         fp.write(f"# Emoji count: {len(emojis)}\n")
         fp.write("from __future__ import annotations\n\n")
         fp.write("import typing\n\n")
 
-        fp.write('__all__: typing.Sequence[str] = ("EMOJIS", "EMOJIS_VERSION")\n\n')
+        fp.write('__all__: typing.Sequence[str] = ("EMOJIS",)\n\n')
 
-        fp.write(f'EMOJIS_VERSION: typing.Final[str] = "{version}"\n')
-        fp.write("EMOJIS: typing.Set[str] = {\n")
+        fp.write("EMOJIS: typing.Final[typing.Set[str]] = {\n")
 
         for emoji in emojis:
             fp.write(f'    "{emoji}",\n')
@@ -71,27 +74,57 @@ def create_emoji_file(*, template_file: str, output_file: str, version: str, emo
         fp.write("}\n")
 
 
+def get_emoji_version(version_file: str) -> int:
+    with open(version_file, "r") as fp:
+        match = re.search(r'^__emojis_version__\s*=\s*"([^\'"]*)"', fp.read(), re.MULTILINE)
+        if not match:
+            raise RuntimeError("__emojis_version__ not found!")
+
+        return int(match.group(1))
+
+
+def set_emoji_version(*, version_file: str, version: int) -> None:
+    with open(version_file, "r") as fp:
+        content = fp.read()
+
+    new_package_version = datetime.datetime.now().strftime("%Y.%m.%d")
+    content = re.sub(
+        r'^__version__\s*=\s*"([^\'"]*)"', f'__version__ = "{new_package_version}"', content, flags=re.MULTILINE
+    )
+    content = re.sub(
+        r'^__emojis_version__\s*=\s*"([^\'"]*)"', f'__emojis_version__ = "{version}"', content, flags=re.MULTILINE
+    )
+
+    with open(version_file, "w") as fp:
+        fp.write(content)
+
+
 def main() -> None:
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         print("Missing arguments")
         exit(1)
 
-    if len(sys.argv) > 3:
+    if len(sys.argv) > 4:
         print("Too many arguments")
         exit(1)
 
-    version, emojis = fetch_discord_emojis()
-
     template_file = sys.argv[1]
     output_file = sys.argv[2]
-    create_emoji_file(
-        template_file=template_file,
-        output_file=output_file,
-        version=version,
-        emojis=emojis,
-    )
+    version_file = sys.argv[3]
 
-    print(f"Generated emoji list file under: {output_file}")
+    version, emojis = fetch_discord_emojis()
+
+    current_version = get_emoji_version(version_file)
+    if current_version == version:
+        print(f"Emoji list already at the latest version ({version})")
+        exit(0)
+
+    print(f"New emoji list version [current={current_version}, new={version}]")
+
+    create_emoji_file(template_file=template_file, output_file=output_file, emojis=emojis)
+    set_emoji_version(version_file=version_file, version=version)
+
+    print(f"Generated emoji list file under {output_file!r}")
 
 
 if __name__ == "__main__":

@@ -20,9 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+import re
+
 import setuptools
 
-import versioneer
+
+def get_version():
+    with open(os.path.join("discord_emojis", "_version.py")) as fp:
+        match = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', fp.read(), re.MULTILINE)
+
+    if not match:
+        raise RuntimeError("__version__ is not set!")
+
+    return match.group(1)
 
 
 def long_description():
@@ -32,8 +43,7 @@ def long_description():
 
 setuptools.setup(
     name="discord_emojis",
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version=get_version(),
     description="An up-to-date collection of all valid Discord emojis",
     long_description=long_description(),
     long_description_content_type="text/markdown",

@@ -1,20 +1,22 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
+    paths:
+      - "discord_emojis/_version.py"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      VERSION: ${{ github.event.release.tag_name }}
-      TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-      TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+    permissions:
+      id-token: write
+      contents: write
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
@@ -24,5 +26,22 @@ jobs:
         with:
           python-version: 3.12
 
-      - name: Deploy
-        run: bash scripts/deploy.sh
+      - name: Extract version
+        id: extract_version
+        run: |
+          version=$(python -c "import discord_emojis; print(discord_emojis.__version__)")
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Build package
+        run: |
+          pip install build
+          python -m build
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ steps.extract_version.outputs.version }}
+          tag_name: ${{ steps.extract_version.outputs.version }}
