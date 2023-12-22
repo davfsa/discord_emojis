@@ -1,2 +1,2 @@
-__version__ = "2023.12.17"
-__emojis_version__ = "1698829454673"
+__version__ = "2023.12.22"
+__emojis_version__ = "1703245610482"
