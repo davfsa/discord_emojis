@@ -36,6 +36,7 @@ import urllib.request
 
 sys.path.append(".")
 
+from discord_emojis import emojis_collection
 from discord_emojis import utils
 
 DISCORD_EMOJI_MAPPING_URL = "https://emzi0767.gl-pages.emzi0767.dev/discord-emoji/discordEmojiMap-canary.min.json"
@@ -99,14 +100,14 @@ def set_emoji_version(*, version_file: str, version: int) -> None:
         fp.write(content)
 
 
-def main() -> None:
+def main() -> int:
     if len(sys.argv) < 4:
-        print("Missing arguments")
-        exit(1)
+        print(f"Missing arguments (received {len(sys.argv) - 1} expected 3)")
+        return 1
 
     if len(sys.argv) > 4:
-        print("Too many arguments")
-        exit(1)
+        print(f"Too many arguments (received {len(sys.argv) - 1}, expected 3)")
+        return 1
 
     template_file = sys.argv[1]
     output_file = sys.argv[2]
@@ -114,12 +115,14 @@ def main() -> None:
 
     version, emojis = fetch_discord_emojis()
 
-    current_version = get_emoji_version(version_file)
-    if current_version == version:
-        print(f"Emoji list already at the latest version ({version})")
-        exit(0)
+    emojis_set = set(emojis)
+    if emojis_set == emojis_collection.EMOJIS:
+        print(f"Emoji list up to date!")
+        return 0
 
-    print(f"New emoji list version [current={current_version}, new={version}]")
+    added_count = len(emojis_set.difference(emojis_collection.EMOJIS))
+    removed_count = len(emojis_collection.EMOJIS.difference(emojis_set))
+    print(f"New emoji list version (version {version}; {added_count} added; {removed_count} removed)")
 
     create_emoji_file(template_file=template_file, output_file=output_file, emojis=emojis)
     set_emoji_version(version_file=version_file, version=version)
@@ -128,4 +131,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())
