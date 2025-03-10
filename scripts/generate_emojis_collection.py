@@ -39,7 +39,7 @@ sys.path.append(".")
 from discord_emojis import emojis_collection
 from discord_emojis import utils
 
-DISCORD_EMOJI_MAPPING_URL = "https://emzi0767.gl-pages.emzi0767.dev/discord-emoji/discordEmojiMap-canary.min.json"
+DISCORD_EMOJI_MAPPING_URL = "https://emzi0767.mzgit.io/discord-emoji/discordEmojiMap-canary.min.json"
 
 
 def fetch_discord_emojis() -> typing.Tuple[int, typing.List[str]]:
